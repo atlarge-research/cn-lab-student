@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Welcome</title>
+    </head>
+    <body>
+        <h1>Computer Networks Server</h1>
+
+        <p> 
+            If you can see this line in your browser, you already worked with HTTP more than most of the programmers ever did or will do! 
+            We, Computer Networks Team, want to congratulate you with this archivement! 
+        </p>
+
+        <p>
+            Apart from the assignement points, we want to award you with two cutest cat images we could find. 
+            If you can see those, that means your HTTP server can load images as well. Congrats #2!
+        </p>
+
+        <table style="text-align: center; width: 100%">
+            <tr>
+                <td>
+                    <img src ="img/gleb_cat.jpeg" width="300"/>
+                </td>
+                <td>
+                    <img src="img/standing_cat.jpg" width="300">
+                </td>
+            </tr>
+        </table>
+
+        <form action="/data" method="post">
+            <input type="text" name="description" placeholder="Cat description"> <br/>
+            <input type="text" name="cat_url" placeholder="Cat image url"> <br/>
+            <input type="submit">
+        </form>
+
+        <p>After you have submitted a form your cats should be visible on <a href="get_cats.html">this page</a></p> <br/>
+        <span id="test_hook_001" style="display: none;"></span>
+    </body>
+</html>
