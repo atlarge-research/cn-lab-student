@@ -314,6 +314,7 @@ class TestCase():
     
     def execute(self, disable_colors=False):
         success = True
+        tags_string = ' '.join(self.tags)
 
         try:
             self.test_func()
@@ -322,9 +323,14 @@ class TestCase():
                 print(f'\033[92m[ \u2713 ] \033[30m{self.test_id}. {self.test_msg}. \033[92mSuccess! \033[30m')
             else:
                 print(f'[ \u2713 ] {self.test_id}. {self.test_msg}. Success! ')
-        except Exception as e:
-            tags_string = ' '.join(self.tags)
 
+        except TypeError as e: # originates from pexpect .before if script terminates. except for more readable error message
+            if not disable_colors:
+                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start \033[30m')
+            else:
+                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour server did not start')
+        
+        except Exception as e:
             success = False
 
             if not disable_colors:

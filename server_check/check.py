@@ -352,6 +352,13 @@ class TestCase():
                 print(f'\033[92m[ \u2713 ] \033[30m{self.test_id}. {self.test_msg}. \033[92mSuccess! \033[30m')
             else:
                 print(f'[ \u2713 ] {self.test_id}. {self.test_msg}. Success!')
+        
+        except TypeError as e: # originates from pexpect .before if script terminates. except for more readable error message
+            if not disable_colors:
+                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start \033[30m')
+            else:
+                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour server did not start')
+
         except Exception as e:
             try:
                 server_process.expect(pexpect.EOF, timeout=0)
