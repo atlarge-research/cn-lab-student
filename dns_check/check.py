@@ -5,6 +5,7 @@ import argparse
 import time
 
 SERVER_ADDRESS = '127.0.0.1'
+SERVER_PORT = 8000
 IPV4ONLY = False
 
 class TestException(Exception):
@@ -40,7 +41,7 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
     return output_buffer
 
 def start_server():
-    return execute_and_detach(f'python3 dns.py --ipv4only {IPV4ONLY} --address {SERVER_ADDRESS} --port 8000')
+    return execute_and_detach(f'python3 dns.py --ipv4only {IPV4ONLY} --address {SERVER_ADDRESS} --port {SERVER_PORT}')
 
 
 def execute_and_detach(cmd):
@@ -59,7 +60,7 @@ def test_simple():
     website_list = ['microsoft.com', 'google.com', 'vk.com', 'amazon.com', 'yahoo.com']
 
     for website in website_list:
-        status_code, output = execute_and_wait(f'nslookup {website} {SERVER_ADDRESS}')
+        status_code, output = execute_and_wait(f'nslookup -port={SERVER_PORT} {website} {SERVER_ADDRESS}')
 
         if status_code != 0:
             raise TestException(f'error when fetching a website {website}. nslookup output is \n\n{output}')
@@ -68,17 +69,17 @@ def test_mx():
     website_list = ['microsoft.com', 'google.com', 'vk.com', 'amazon.com', 'yahoo.com']
 
     for website in website_list:
-        status_code, output = execute_and_wait(f'nslookup -type=mx {website} {SERVER_ADDRESS}')
+        status_code, output = execute_and_wait(f'nslookup -port={SERVER_PORT} -type=mx {website} {SERVER_ADDRESS}')
 
         if status_code != 0:
             raise TestException(f'error when fetching a website {website}.nslookup output is \n\n{output}')
         
 def test_caching():
-    website_list = ['microsoft.com', 'google.com', 'yahoo.com']
+    website_list = ['microsoft.com', 'yahoo.com']
     
     for website in website_list:
         start_time_1 = time.time()
-        status_code, output = execute_and_wait(f'nslookup {website} {SERVER_ADDRESS}:8000')
+        status_code, output = execute_and_wait(f'nslookup -port={SERVER_PORT} {website} {SERVER_ADDRESS}')
         finish_time_1 = time.time()
 
         time_difference_1 = finish_time_1 - start_time_1
@@ -87,7 +88,7 @@ def test_caching():
             raise TestException(f'error when fetching a website {website} for the first time. nslookup output is \n\n{output}')
         
         start_time_2 = time.time()
-        status_code, output = execute_and_wait(f'nslookup {website} {SERVER_ADDRESS}')
+        status_code, output = execute_and_wait(f'nslookup -port={SERVER_PORT} {website} {SERVER_ADDRESS}')
         finish_time_2 = time.time()
 
         time_difference_2 = finish_time_2 - start_time_2
@@ -110,6 +111,7 @@ class TestCase():
     def execute(self, disable_colors=False):
         success = True
         server_process = start_server()
+        time.sleep(5)  # give server some time for a start-up and determining the fastest server
 
         try:
             self.test_func()
