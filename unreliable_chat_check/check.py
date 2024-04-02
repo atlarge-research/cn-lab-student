@@ -385,6 +385,8 @@ class TestCase():
                 print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port \033[30m')
             else:
                 print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port')
+            
+            success = False
 
         except Exception as e:
             if not disable_colors:

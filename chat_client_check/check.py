@@ -355,7 +355,7 @@ class TestCase():
         self.max_clients = max_clients
     
     def execute(self, disable_colors):
-        SUCCESS = True
+        success = True
         server_process,echobot = start_server(self.max_clients)
         tags_string = ' '.join(self.tags)
         
@@ -372,6 +372,8 @@ class TestCase():
                 print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port \033[30m')
             else:
                 print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port')
+            
+            success = False
 
         except Exception as e:
             if not disable_colors:
@@ -379,12 +381,12 @@ class TestCase():
             else:
                 print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nError message is {e}')
 
-            SUCCESS = False
+            success = False
                 
         server_process.terminate(force=True)
         echobot.terminate(force = True)
 
-        return SUCCESS
+        return success
 
 
 test_cases = [
