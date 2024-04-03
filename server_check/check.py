@@ -82,7 +82,7 @@ def execute_and_detach(cmd):
     
 
 def start_script():
-    expected_output = 'Welcome to Chat Client. Enter you login:'
+    expected_output = 'Welcome to Chat Client. Enter your login:'
 
     current_dir = os.getcwd()
     os.chdir(CLIENT_FOLDER_PATH)
@@ -355,7 +355,7 @@ class TestCase():
         
         except TypeError as e: # originates from pexpect .before if script terminates. except for more readable error message
             success = False
-            
+
             if not disable_colors:
                 print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start \033[30m')
             else:

@@ -80,7 +80,7 @@ def execute_and_detach(cmd):
     return child
 
 def start_script():
-    expected_output = 'Welcome to Chat Client. Enter you login:'
+    expected_output = 'Welcome to Chat Client. Enter your login:'
     client_process = pexpect.spawn(f'python3 client.py --address "{SERVER_ADDRESS}" --port {SERVER_PORT}', encoding='utf-8')
 
     output_buffer = handle_pexpect(client_process, [client_process], expected_output, "", "starting client script")
