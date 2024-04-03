@@ -22,26 +22,29 @@ For this course, we distribute you the full test code which is identical to the 
 
 To run the tests locally, you need to install Docker first. The installation instructions can be found [here](https://docs.docker.com/engine/install/).
 
-To emulate the Docker environment we provide you with the Docker image. You can build this image with the command.
+To emulate the Docker environment we provide you with the Docker image. You can find the test framework on [GitHub](https://github.com/atlarge-research/cn-lab-student).&#x20;
 
-<pre class="language-bash"><code class="lang-bash"><strong>docker build -t compnet [FILE_PATH_TO_THE_DOCKER_FOLDER]
-</strong></code></pre>
+To get the Framework, we advise you either to download it and create a new repo or to "[import repository](https://docs.github.com/en/migrations/importing-source-code/using-github-importer/importing-a-repository-with-github-importer)" as **private** on your own Github.
 
-If your present working directory is the same as the one where the Dockerfile is in then you can use a command.
-
-```bash
-docker build -t compnet .
-```
-
-To start the docker container run:
+We will mount your current folder onto the docker container; thus, before executing the command, please make sure your present working directory is the root directory of the tests template. This is the folder which contains the subfolders `chat_client_check`, `server_check`, etc. Once there, run the following command:
 
 ```bash
-docker run --network="host" -v $(pwd):/home/compnet -it compnet
+docker run --rm --network="host" -v $(pwd):/home/compnet -it ghcr.io/atlarge-research/cn-lab-student:latest
 ```
 
-Please note, that this command will mount your current folder onto the docker container; thus, before executing the command, please make sure your present working directory is the root directory of the tests template.
+If you are not in the correct folder, the command will not fail, but your code will not be imported into the container. You can check if your code for the chat client, for example, is correctly mounted by running `cat /chat_client_check/client.py`. You should see your code in the output.
 
-Navigate to the respective assignment folder, put your implementation in the respective file (please note tests will not work if your implementation is in a file other than the dedicated for implementation one), and run:
+Note: if you are on Windows and running this in PowerShell, you will need to replace `$(pwd)` with `${PWD}`.
+
+The first time you run this command, it will download our Docker image. This might take a while, but it only happens during the initial run, and when an update to the tests causes the image to change. Future runs should be quick.
+
+Once the pull finishes, your terminal will be running commands within the docker container. Next, navigate to the subfolder of the assignment you want to check. For example, for the [chat-client.md](../assignments/mandatory/chat-client.md "mention"), you would run:
+
+```bash
+cd ./chat_client_check
+```
+
+You can now write your implementation in the respective file (please note tests will not work if your implementation is in a file other than the dedicated for implementation one), and run:
 
 ```bash
 python3 check.py
@@ -91,4 +94,6 @@ Why is it unrecommended? All the tests are built on top of one another and if yo
 
 ### Bug Bounty Program
 
-While we worked hard on the tests, but, as in the case with all the software, there can be bugs. Have you found one? Great! Submit your fix through a GitHub pull request and earn up to 50 points and a CVable achievement! You can always simply let us know about a bug you found and we will fix it; however, in this case, you do not get any points. Please note, that we reserve a right to reject your PR based on the styling or any other (we find applicable) issues.
+While we worked hard on the tests, but, as in the case with all the software, there can be bugs. Have you found one? Great! Submit your fix through a [GitHub](https://github.com/atlarge-research/cn-lab-student) pull request and earn up to 50 points and a CVable achievement! You can always simply let us know about a bug you found and we will fix it; however, in this case, you do not get any points. Please note, that we reserve a right to reject your PR based on the styling or any other (we find applicable) issues.
+
+To get points, please mention your VUnet ID in your pull request!
