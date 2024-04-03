@@ -38,7 +38,7 @@ Note: if you are on Windows and running this in PowerShell, you will need to rep
 
 The first time you run this command, it will download our Docker image. This might take a while, but it only happens during the initial run, and when an update to the tests causes the image to change. Future runs should be quick.
 
-Once the pull finishes, your terminal will be running commands within the docker container. Next, navigate to the subfolder of the assignment you want to check. For example, for the [chat-client.md](../assignments/mandatory/chat-client.md "mention"), you would run:
+Once the pull finishes, your terminal will be running commands within the docker container. Next, navigate to the subfolder of the assignment you want to check. For example, for the chat client, you would run:
 
 ```bash
 cd ./chat_client_check
