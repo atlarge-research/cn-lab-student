@@ -10,6 +10,7 @@ We have tests available for the following assignments:
 2. Chat Server
 3. Chat For Unreliable Networks
 4. HTTP Server
+5. DNS Server
 
 Tests can be both executed locally and on CodeGrade. Please note, that for submission purposes, only the CodeGrade version counts. That is if you have tests passing locally but not on CodeGrade your assignment **will not** be accepted.
 
