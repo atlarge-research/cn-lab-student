@@ -3,6 +3,15 @@ on:
   push:
     branches:
       - 'main'
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'Docker Image tag'
+        required: true
+        default: 'latest'
+        type: string
+env:
+  DEV_TAG: dev
 jobs:
   build_and_release:
     runs-on: ubuntu-latest
@@ -21,8 +30,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build image and push
         uses: docker/build-push-action@v3
+        env:
+          IMAGE_TAG: ${{ github.event_name != 'workflow_dispatch' && env.imageTag || inputs.build_id }}
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ github.repository }}:dev
+          tags: ghcr.io/${{ github.repository }}:${{ env.IMAGE_TAG }}
