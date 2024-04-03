@@ -370,13 +370,13 @@ class TestCase():
             self.test_func()
 
             if not disable_colors:
-                print(f'\033[92m[ \u2713 ] \033[30m{self.test_id}. {self.test_msg}. \033[92mSuccess! \033[30m')
+                print(f'\033[92m[ \u2713 ] \033[30m{self.test_id}. {self.test_msg}. \033[92mSuccess! \033[0m')
             else:
                 print(f'[ \u2713 ] {self.test_id}. {self.test_msg}. Success!')
 
         except TypeError as e: # originates from pexpect .before if script terminates. except for more readable error message
             if not disable_colors:
-                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port \033[30m')
+                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port \033[0m')
             else:
                 print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour client did not start or connected to a wrong server port')
             
@@ -384,7 +384,7 @@ class TestCase():
 
         except Exception as e:
             if not disable_colors:
-                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nError message is {e} \033[30m')
+                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nError message is {e} \033[0m')
             else:
                 print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nError message is {e}')
 
