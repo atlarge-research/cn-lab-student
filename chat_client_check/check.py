@@ -163,11 +163,13 @@ def test_simple_exchange():
 
     msgs = [generate_message() for _ in range(TOTAL_MSGS_SENT)]
     expected_output = ''.join([rf'\s*From\s+{client_name_1}:\s+{msg}\s*\n' for msg in msgs])
+    expected_output_to_show = ''.join([f'From {client_name_1}: {msg}\n' for msg in msgs])
+
     expected_output = r'\s*' + expected_output + r'\s*'
 
     [client_process_1.sendline(f'@{client_name_2} {msg}') for msg in msgs]
 
-    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "simple message exchange (exchanging 10 messages between 2 clients)", 20)
+    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "simple message exchange (exchanging 10 messages between 2 clients)", 20, display_expect_string=expected_output_to_show)
 
     return client_process_2, output_buffer_2
 
@@ -180,14 +182,16 @@ def test_longer_exchange_messages():
     client_process_1, output_buffer_1 = log_in(client_name_1)
     client_process_2, output_buffer_2 = log_in(client_name_2)
 
-    MSGS = [generate_message(256, 512) for _ in range(TOTAL_MSGS_SENT)]
-    expected_output = ''.join([rf'\s*From\s+{client_name_1}:\s+{msg}\s*\n' for msg in MSGS])
+    msgs = [generate_message(256, 512) for _ in range(TOTAL_MSGS_SENT)]
+    expected_output = ''.join([rf'\s*From\s+{client_name_1}:\s+{msg}\s*\n' for msg in msgs])
+    expected_output_to_show = ''.join([f'From {client_name_1}: {msg}\n' for msg in msgs])
+
     expected_output = r'\s*' + expected_output + r'\s*'
 
-    for msg in MSGS:
+    for msg in msgs:
         client_process_1.sendline(f'@{client_name_2} {msg}')
 
-    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "simple message exchange with long messages (exchanging 10 messages between 2 clients)", 20)
+    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "simple message exchange with long messages (exchanging 10 messages between 2 clients)", 20, display_expect_string=expected_output_to_show)
 
     return client_process_2, output_buffer_2
 
