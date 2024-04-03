@@ -36,7 +36,7 @@ docker build -t compnet .
 To start the docker container run:
 
 ```bash
-docker run --network="host" -v .:/home/compnet -it compnet
+docker run --network="host" -v $(pwd):/home/compnet -it compnet
 ```
 
 Please note, that this command will mount your current folder onto the docker container; thus, before executing the command, please make sure your present working directory is the root directory of the tests template.
