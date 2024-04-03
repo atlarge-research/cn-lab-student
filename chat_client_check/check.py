@@ -36,6 +36,9 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
         for process in processes_to_terminate:
             process.terminate(force=True)
 
+        if display_expect_string:
+            expect_string = display_expect_string
+
         raise TestException(f'unexpected output at step {step}!\nExpected output:\n\n{expect_string}\n\nActual output (the last printed line): \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     except EndOfFileException:
         output_buffer += child_process.before + child_process.after
