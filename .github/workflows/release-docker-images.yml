@@ -1,4 +1,4 @@
-name: Release dev image
+name: Release docker image
 on:
   push:
     branches:
