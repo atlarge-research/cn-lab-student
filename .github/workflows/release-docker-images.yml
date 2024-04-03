@@ -12,6 +12,9 @@ on:
         type: string
 env:
   DEV_TAG: dev
+concurrency:
+  group: ${{ github.event_name }}
+  cancel-in-progress: true
 jobs:
   build_and_release:
     runs-on: ubuntu-latest
