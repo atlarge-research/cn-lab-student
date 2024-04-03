@@ -31,7 +31,7 @@ jobs:
       - name: Build image and push
         uses: docker/build-push-action@v3
         env:
-          IMAGE_TAG: ${{ github.event_name != 'workflow_dispatch' && inputs.build_id || env.imageTag }}
+          IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.imageTag || env.DEV_TAG }}
         with:
           context: .
           push: true
