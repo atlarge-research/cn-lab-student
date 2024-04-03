@@ -91,4 +91,4 @@ Why is it unrecommended? All the tests are built on top of one another and if yo
 
 ### Bug Bounty Program
 
-While we worked hard on the tests, but, as in the case with all the software, there can be bugs. Have you found one? Great! Submit your fix through a GitHub pull request and earn 50 points and a CVable achievement! You can always simply let us know about a bug you found and we will fix it; however, in this case, you do not get any points. Please note, that we reserve a right to reject your PR based on the styling or any other (we find applicable) issues.
+While we worked hard on the tests, but, as in the case with all the software, there can be bugs. Have you found one? Great! Submit your fix through a GitHub pull request and earn up to 50 points and a CVable achievement! You can always simply let us know about a bug you found and we will fix it; however, in this case, you do not get any points. Please note, that we reserve a right to reject your PR based on the styling or any other (we find applicable) issues.
