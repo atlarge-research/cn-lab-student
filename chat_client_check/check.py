@@ -227,7 +227,7 @@ def not_restart_failed_attempt():
     client_name_2 = generate_name()
 
     expected_output_IN_USE = f'Cannot log in as {client_name_1}. That username is already in use.'
-    expected_output_SUCCESS = f'Succesfully logged in as {client_name_2}'
+    expected_output_SUCCESS = f'Successfully logged in as {client_name_2}'
 
     client_process_1, _ = log_in(client_name_1)
 
