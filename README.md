@@ -40,6 +40,14 @@ docker run --network="host" -v .:/home/compnet -it compnet
 
 Please note, that this command will mount your current folder onto the docker container; thus, before executing the command, please make sure your present working directory is the root directory of the tests template.
 
+Docker requires elevated privileges to run, therefore this may fail. If it does then you can run:
+
+```bash
+sudo groupadd docker 
+sudo usermod -aG docker $YOURUSERNAME
+newgrp docker
+```
+
 Navigate to the respective assignment folder, put your implementation in the respective file (please note tests will not work if your implementation is in a file other than the dedicated for implementation one), and run:
 
 ```bash
