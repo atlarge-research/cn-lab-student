@@ -315,7 +315,7 @@ def send_message_before_login():
     client_name_1 = generate_name()
 
     expected_output = "Error: Unknown issue in previous message header."
-    client_process.sendline(f'@{client_name_1} {generate_message(16, 32)}')
+    client_process.sendline(f'SEND {client_name_1} {generate_message(16, 32)}')
 
     handle_pexpect(client_process, [client_process], expected_output, output_buffer, "sending a message before logging in")
 
