@@ -17,4 +17,10 @@ WORKDIR /home/compnet
 
 COPY . /home/compnet/
 
+RUN rm /home/compnet/chat_client_check/client.py \
+    /home/compnet/dns_check/dns.py \
+    /home/compnet/server_check/server.py \
+    /home/compnet/http_server_check/server.py \
+    /home/compnet/unreliable_chat_check/client.py
+
 RUN pip install -r requirements.txt
