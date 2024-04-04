@@ -7,6 +7,7 @@ import time
 SERVER_ADDRESS = '127.0.0.1'
 SERVER_PORT = 8000
 IPV4ONLY = False
+STUDENT_FILE_PATH = "../student/dns_check/dns.py"
 
 class TestException(Exception):
     pass
@@ -41,7 +42,7 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
     return output_buffer
 
 def start_server():
-    return execute_and_detach(f'python3 dns.py --ipv4only {IPV4ONLY} --address {SERVER_ADDRESS} --port {SERVER_PORT}')
+    return execute_and_detach(f'python3 {STUDENT_FILE_PATH} --ipv4only {IPV4ONLY} --address {SERVER_ADDRESS} --port {SERVER_PORT}')
 
 
 def execute_and_detach(cmd):
