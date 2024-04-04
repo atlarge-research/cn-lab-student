@@ -10,6 +10,7 @@ import time
 CLIENT_FOLDER_PATH = './'
 ADDRESS = "127.0.0.1"
 PORT = 5378
+STUDENT_FILE_PATH = "../student/server_check/server.py"
 
 def generate_name():
     return ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
@@ -50,7 +51,7 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
     return output_buffer
 
 def start_server():
-    server_process = execute_and_detach(f'python3 server.py --address "{ADDRESS}" --port {PORT}')
+    server_process = execute_and_detach(f'python3 {STUDENT_FILE_PATH} --address "{ADDRESS}" --port {PORT}')
     expected_output = "Server is on"
 
     output_buffer = handle_pexpect(server_process, [server_process], expected_output, "", "starting a server")
@@ -281,7 +282,7 @@ def send_message_to_unknown():
     return client_process, output_buffer
 
 def verify_file_for_sendall():
-    file_path = os.path.join(os.getcwd(), "server.py")
+    file_path = os.path.join(os.getcwd(), STUDENT_FILE_PATH)
 
     try:
         with open(file_path, 'r') as file:
