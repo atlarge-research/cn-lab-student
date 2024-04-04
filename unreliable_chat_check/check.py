@@ -13,6 +13,7 @@ class TestException(Exception):
 SERVER_DIRECTORY = "./"
 SERVER_ADDRESS = "127.0.0.1"
 SERVER_PORT = 5382
+STUDENT_FILE_PATH = "../student/unreliable_chat_check/client.py"
 
 def generate_name():
     return ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
@@ -88,7 +89,7 @@ def execute_and_detach(cmd):
 
 def start_script():
     expected_output = f'Welcome to Chat Client. Enter your login:'
-    client_process = pexpect.spawn(f'python3 client.py --address "{SERVER_ADDRESS}" --port {SERVER_PORT}', encoding='utf-8')
+    client_process = pexpect.spawn(f'python3 {STUDENT_FILE_PATH} --address "{SERVER_ADDRESS}" --port {SERVER_PORT}', encoding='utf-8')
 
     output_buffer = handle_pexpect(client_process, [client_process], f'{expected_output}', "", "starting the client script")
 
@@ -272,7 +273,7 @@ def check_name():
     return client_process, output_buffer
 
 def verify_file_for_sendall():
-    file_path = os.path.join(os.getcwd(), "client.py")
+    file_path = os.path.join(os.getcwd(), STUDENT_FILE_PATH)
 
     try:
         with open(file_path, 'r') as file:
