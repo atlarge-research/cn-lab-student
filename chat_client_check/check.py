@@ -9,6 +9,8 @@ from pexpect.exceptions import TIMEOUT as TimeoutException, EOF as EndOfFileExce
 SERVER_ADDRESS = '127.0.0.1'
 SERVER_PORT = 5378
 
+STUDENT_FILE_PATH = "../student/chat_client_check/client.py"
+
 class TestException(Exception):
     pass
 
@@ -84,7 +86,7 @@ def execute_and_detach(cmd):
 
 def start_script():
     expected_output = 'Welcome to Chat Client. Enter your login:'
-    client_process = pexpect.spawn(f'python3 client.py --address "{SERVER_ADDRESS}" --port {SERVER_PORT}', encoding='utf-8')
+    client_process = pexpect.spawn(f'python3 {STUDENT_FILE_PATH} --address "{SERVER_ADDRESS}" --port {SERVER_PORT}', encoding='utf-8')
 
     output_buffer = handle_pexpect(client_process, [client_process], expected_output, "", "starting client script")
 
@@ -264,7 +266,7 @@ def check_name():
     return client_process, output_buffer
 
 def verify_file_for_sendall():
-    file_path = os.path.join(os.getcwd(), "client.py")
+    file_path = os.path.join(os.getcwd(), STUDENT_FILE_PATH)
 
     try:
         with open(file_path, 'r') as file:
