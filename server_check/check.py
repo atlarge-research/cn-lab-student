@@ -62,9 +62,10 @@ def start_server():
 def execute_and_wait(cmd):
     process = pexpect.spawn('/bin/sh', ['-c', cmd], encoding='utf-8')
     process.expect(pexpect.EOF)
+    output = process.before  # Capture the output
     process.wait()
 
-    return process.exitstatus
+    return process.exitstatus, output
 
 def execute_and_collect_output(cmd):
     child = pexpect.spawn(cmd, encoding='utf-8')
@@ -312,17 +313,16 @@ def error_body():
     return client_process_1, output_buffer
 
 def send_message_before_login():
-    client_process, output_buffer = start_script()
     client_name_1 = generate_name()
+    message = generate_message()
+    
+    expected_output = "BAD-RQST-HDR"
+    _, output = execute_and_wait(f'echo "SEND {client_name_1} {message}" | nc 127.0.0.1 5378 -W 1')
+    
+    if not expected_output in output:
+        raise TestException(f"your sever did not return BAD-RQST-HDR when trying to send messages before logging in. Answer was '{output}'")
 
-    expected_output = "Error: Unknown issue in previous message header."
-    client_process.sendline(f'@{client_name_1} {generate_message(16, 32)}')
-
-    handle_pexpect(client_process, [client_process], expected_output, output_buffer, "sending a message before logging in")
-
-    client_process.terminate()
-
-    return client_process, output_buffer
+    return output
 
 class TestCase():
     def __init__(self, test_func, test_id, test_msg, tags=[], max_clients=300) -> None:
