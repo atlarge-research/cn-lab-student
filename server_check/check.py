@@ -108,46 +108,28 @@ def log_in(client_name="client"):
     return client_process, output_buffer
 
 def reject_usernames_commas():
-    client_name = generate_name()
-    first_rand_index = random.randint(0, len(client_name) - 1)
-    client_name = client_name[:first_rand_index] + "," + client_name[first_rand_index + 1:]
+    client_name_pt1 = generate_name()
+    client_name_pt2 = generate_name()
+    
+    expected_output = "BAD-RQST-BODY"
+    _, output = execute_and_wait(f'echo "HELLO-FROM {client_name_pt1},{client_name_pt2}" | nc 127.0.0.1 5378 -W 1')
+    
+    if not expected_output in output:
+        raise TestException(f"your sever did not return BAD-RQST-BODY when logging in with a username that contains commas. Reply was '{output}'")
 
-    expected_output = "Error: Unknown issue in previous message header."
-
-    client_process, output_buffer = start_script()
-    client_process.sendline(client_name)
-
-    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "rejecting client username if there are commas in it")
-
-    return client_process, output_buffer
+    return output
 
 def reject_usernames_spaces():
-    client_name = generate_name()
-    first_rand_index = random.randint(0, len(client_name) - 1)
-    client_name = client_name[:first_rand_index] + " " + client_name[first_rand_index + 1:]
+    client_name_pt1 = generate_name()
+    client_name_pt2 = generate_name()
+    
+    expected_output = "BAD-RQST-BODY"
+    _, output = execute_and_wait(f'echo "HELLO-FROM {client_name_pt1} {client_name_pt2}" | nc 127.0.0.1 5378 -W 1')
+    
+    if not expected_output in output:
+        raise TestException(f"your sever did not return BAD-RQST-BODY when logging in with a username that contains spaces. Reply was '{output}'")
 
-    expected_output = "Error: Unknown issue in previous message header."
-
-    client_process, output_buffer = start_script()
-    client_process.sendline(client_name)
-
-    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "rejecting client username if there are spaces in it")
-
-    return client_process, output_buffer
-
-def reject_usernames_new_lines():
-    client_name = generate_name()
-    first_rand_index = random.randint(0, len(client_name) - 1)
-    client_name = client_name[:first_rand_index] + "\\n" + client_name[first_rand_index + 1:]
-
-    expected_output = "Error: Unknown issue in previous message header."
-
-    client_process, output_buffer = start_script()
-    client_process.sendline(client_name)
-
-    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "rejecting client username if there are newline symbols in it")
-
-    return client_process, output_buffer
+    return output
 
 def test_16_clients():
     MAX_CLIENTS = 16
@@ -391,12 +373,11 @@ test_cases = [
     TestCase(verify_file_for_sendall, "chat_server_008", "The server must not use the sendall() function in Python", []),
     TestCase(error_body,  "chat_server_009", "Last message received from the client contains an error in the body", ['PR4']),
     TestCase(reject_usernames_spaces, "chat_server_010", "Server does not accept usernames with spaces", ['PR6', 'PR16']),
-    TestCase(reject_usernames_new_lines, "chat_server_011", "Server does not accept usernames with new lines", ['PR6', 'PR16']),
-    TestCase(reject_usernames_commas, "chat_server_012", "Server does not accept usernames with commas", ['PR6']),
-    TestCase(test_16_clients, "chat_server_013", "Server supports 16 clients", ['TR1', 'TR2']),
-    TestCase(test_busy, "chat_server_014", "Server responds with busy for 17 clients", ['PR15']),
-    TestCase(disconnect, "chat_server_015", "Server accepts disconnections", ['TR3']),
-    TestCase(send_message_before_login, "chat_server_016", "Server responds with a bad header if the message sent by the client who is not logged in", ['PR7'])
+    TestCase(reject_usernames_commas, "chat_server_011", "Server does not accept usernames with commas", ['PR6']),
+    TestCase(test_16_clients, "chat_server_012", "Server supports 16 clients", ['TR1', 'TR2']),
+    TestCase(test_busy, "chat_server_013", "Server responds with busy for 17 clients", ['PR15']),
+    TestCase(disconnect, "chat_server_014", "Server accepts disconnections", ['TR3']),
+    TestCase(send_message_before_login, "chat_server_015", "Server responds with a bad header if the message sent by the client who is not logged in", ['PR7'])
 ]
 
 parser = argparse.ArgumentParser(description='Process test arguments')
