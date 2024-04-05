@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 
 SERVER_ADDRESS = "127.0.0.1"
 SERVER_PORT = 8000
+STUDENT_FILE_PATH = "../student/http_server_check/server.py"
 
 def generate_name():
     return ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
@@ -68,7 +69,7 @@ def handle_requests_request(page_path, data):
         raise TestException(f'error when requesting {page_path} with method POST: {e}')
 
 def start_server():
-    server_process = execute_and_detach(f'python3 server.py --address {SERVER_ADDRESS} --port {SERVER_PORT}')
+    server_process = execute_and_detach(f'python3 {STUDENT_FILE_PATH} --address {SERVER_ADDRESS} --port {SERVER_PORT}')
     EXPECTED_OUTPUT = f'Serving HTTP on port {SERVER_PORT}'
 
     output_buffer = handle_pexpect(server_process, [server_process], EXPECTED_OUTPUT, "", "starting a server")
