@@ -115,7 +115,7 @@ def reject_usernames_commas():
     _, output = execute_and_wait(f'echo "HELLO-FROM {client_name_pt1},{client_name_pt2}" | nc 127.0.0.1 5378 -W 1')
     
     if not expected_output in output:
-        raise TestException(f"your sever did not return BAD-RQST-BODY when logging in with a username that contains commas. Reply was '{output}'")
+        raise TestException(f"your server did not return BAD-RQST-BODY when logging in with a username that contains commas. Reply was '{output}'")
 
     return output
 
@@ -127,7 +127,7 @@ def reject_usernames_spaces():
     _, output = execute_and_wait(f'echo "HELLO-FROM {client_name_pt1} {client_name_pt2}" | nc 127.0.0.1 5378 -W 1')
     
     if not expected_output in output:
-        raise TestException(f"your sever did not return BAD-RQST-BODY when logging in with a username that contains spaces. Reply was '{output}'")
+        raise TestException(f"your server did not return BAD-RQST-BODY when logging in with a username that contains spaces. Reply was '{output}'")
 
     return output
 
@@ -302,7 +302,7 @@ def send_message_before_login():
     _, output = execute_and_wait(f'echo "SEND {client_name_1} {message}" | nc 127.0.0.1 5378 -W 1')
     
     if not expected_output in output:
-        raise TestException(f"your sever did not return BAD-RQST-HDR when trying to send messages before logging in. Answer was '{output}'")
+        raise TestException(f"your server did not return BAD-RQST-HDR when trying to send messages before logging in. Answer was '{output}'")
 
     return output
 
