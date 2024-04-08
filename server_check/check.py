@@ -54,7 +54,7 @@ def start_server():
     server_process = execute_and_detach(f'python3 {STUDENT_FILE_PATH} --address "{ADDRESS}" --port {PORT}')
     expected_output = "Server is on"
 
-    output_buffer = handle_pexpect(server_process, [server_process], expected_output, "", "starting a server")
+    output_buffer = handle_pexpect(server_process, [server_process], expected_output, "", "starting a server", timeout=10)
         
     return server_process, output_buffer
 
@@ -103,7 +103,7 @@ def log_in(client_name="client"):
     client_process, output_buffer = start_script()
     client_process.sendline(client_name)
 
-    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "logging in with a client")
+    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "logging in with a client", timeout=3)
 
     return client_process, output_buffer
 
@@ -317,7 +317,7 @@ class TestCase():
     def execute(self, disable_colors=False):
         success = True
         tags_string = ' '.join(self.tags)
-
+        
         try:
             server_process, _ = start_server()
         except:
