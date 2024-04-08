@@ -169,7 +169,7 @@ def send_data_and_check_is_visible():
 
     response = requests.post(f'http://{SERVER_ADDRESS}:{SERVER_PORT}{PAGE_PATH}', data=files, timeout=(5, 5))
 
-    PATH = "/get_cats.html"
+    PATH = "/personal_cats.html"
 
     connection = http.client.HTTPConnection(SERVER_ADDRESS, SERVER_PORT, timeout=3)
     connection.request("GET", PATH)
