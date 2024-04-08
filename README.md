@@ -29,10 +29,10 @@ To get the Framework, we advise you either to download it and create a new repo 
 We will mount your current folder onto the docker container; thus, before executing the command, please make sure your present working directory is the root directory of the tests template. This is the folder which contains the subfolders `chat_client_check`, `server_check`, etc. Once there, run the following command:
 
 ```bash
-docker run --rm --network="host" -v $(pwd):/home/compnet -it ghcr.io/atlarge-research/cn-lab-student:latest
+docker run --rm --network="host" --pull=always -v $(pwd):/home/compnet/student -it ghcr.io/atlarge-research/cn-lab-student:latest
 ```
 
-If you are not in the correct folder, the command will not fail, but your code will not be imported into the container. You can check if your code for the chat client, for example, is correctly mounted by running `cat /chat_client_check/client.py`. You should see your code in the output.
+If you are not in the correct folder, the command will not fail, but your code will not be imported into the container. You can check if your code for the chat client, for example, is correctly mounted by running `cat student/chat_client_check/client.py`. You should see your code in the output.
 
 Note: if you are on Windows and running this in PowerShell, you will need to replace `$(pwd)` with `${PWD}`.
 
