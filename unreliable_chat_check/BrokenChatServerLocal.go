@@ -241,7 +241,7 @@ func (b *BrokenMessageOutputStream) WriteAndLog(msg []byte, addr net.Addr) {
 
 func main() {
 	address := flag.String("address", "127.0.0.1", "The Chat Server Address.")
-	port := flag.String("port", "8888", "The Chat Server Port.")
+	port := flag.String("port", "5382", "The Chat Server Port.")
 
 	burst := flag.Float64("burst", 0, "The probability of message burst. Works only if executed locally")
 	delay := flag.Float64("delay", 0, "Message delay. Works only if executed locally")
