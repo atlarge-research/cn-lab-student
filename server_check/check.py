@@ -340,9 +340,9 @@ class TestCase():
             success = False
 
             if not disable_colors:
-                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start \033[0m')
+                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start or did not keep running\033[0m')
             else:
-                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour server did not start')
+                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour server did not start or did not keep running')
 
         except Exception as e:
             try:
@@ -363,7 +363,7 @@ class TestCase():
         return success
 
 test_cases = [
-    TestCase(start_script, "chat_server_001", "Server starts successfuly"),
+    TestCase(start_script, "chat_server_001", "Server starts successfuly", ['TR5']),
     TestCase(log_in, "chat_server_002", "Log in with unique name and expect success", ['PR2', 'PR3']),
     TestCase(log_in_duplicate, "chat_server_003", "Log in with duplicate name and expect failure", ['PR5']),
     TestCase(list_users, "chat_server_004", "Log in, list users and expect success", ['PR8', 'PR9']),
