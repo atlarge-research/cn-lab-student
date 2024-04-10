@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     strace \
     openjdk-17-jre-headless \
     golang-go \
-    dnsutils
+    dnsutils \
+    nano \
+    tmux
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
