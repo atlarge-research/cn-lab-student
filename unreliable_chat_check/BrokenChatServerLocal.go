@@ -369,7 +369,11 @@ func handleHello(message string, addr net.Addr, output BrokenMessageOutputStream
 		} else { // HELLO-FROM format is correct. Enough space for new client
 			name := match[3]
 			if cb.IsKnown(name) { // But this username already exists
-				output.Send(addr, ReplyInUse)
+				if cb.nameToAddr[name] == addr.String(){ // check if username belongs to this address
+					output.Send(addr, ReplyBadHdr)
+				} else {
+					output.Send(addr, ReplyInUse)
+				}
 			} else { // We don't know this user
 				cb.Add(addr, name)
 				output.Send(addr, "HELLO "+name+"\n")
@@ -377,10 +381,8 @@ func handleHello(message string, addr net.Addr, output BrokenMessageOutputStream
 		}
 	} else {
 		if match := regexDisallowedNameCharacters.FindStringSubmatch(message); match != nil {
-			output.Send(addr, ReplyBadHdr)
-		} else {
 			output.Send(addr, ReplyBadBody)
-		}
+		} 
 	}
 }
 
