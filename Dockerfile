@@ -1,14 +1,16 @@
-FROM ubuntu:latest
+FROM ubuntu:jammy
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     netcat \
     software-properties-common \
     python3.10 \
     python3-pip \
     strace \
-    openjdk-17-jdk \
+    openjdk-17-jre-headless \
     golang-go \
-    dnsutils
+    dnsutils \
+    nano \
+    tmux
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
