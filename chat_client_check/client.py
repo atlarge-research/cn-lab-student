@@ -15,5 +15,7 @@ args = parser.parse_args()
 SERVER_HOST = args.address
 SERVER_PORT = args.port
 
+# SERVER_HOST and SERVER_PORT contain address and port arguments
+
 print('Welcome to Chat Client. Enter your login:')
 # Please put your code in this file
