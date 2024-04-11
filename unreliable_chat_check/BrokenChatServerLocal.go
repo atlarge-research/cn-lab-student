@@ -34,7 +34,6 @@ var (
 	regexSet                      = regexp.MustCompile("((SET) (\\p{L}+) (([0-9]*[.])?[0-9]+)$)")
 	regexSetRange                 = regexp.MustCompile("((SET) ([\\p{L}\\-]+) ([0-9]+) ([0-9]+)$)")
 	regexReset                    = regexp.MustCompile("(RESET)")
-	regexDisallowedNameCharacters = regexp.MustCompile(`[@#$%^&*!]`)
 )
 
 type Settings struct {
