@@ -387,7 +387,7 @@ func handleGet(message string, addr net.Addr, output BrokenMessageOutputStream) 
 	if _, ok := cb.GetUser(addr); ok {
 		if match := regexGet.FindStringSubmatch(message); match != nil {
 			var b strings.Builder
-			b.WriteString("VALUE ")
+			b.WriteString(fmt.Sprintf("VALUE %s",match[3]))
 			switch match[3] {
 			case "DROP":
 				b.WriteString(fmt.Sprintf("%f", localSettings.drop))
