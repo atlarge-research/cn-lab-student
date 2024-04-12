@@ -420,9 +420,8 @@ func handleSet(message string, addr net.Addr, output BrokenMessageOutputStream) 
 	success := false 
 	if _, ok := cb.GetUser(addr); ok {
 		if match := regexSet.FindStringSubmatch(message); match != nil {
-			// Extract value and parse it as float
-			numericValue := match[4]
-			value, err := strconv.ParseFloat(numericValue, 64)
+
+			value, err := strconv.ParseFloat(match[4], 64)
 			if err != nil {
 				output.Send(addr, ReplyBadBody)
 				return
