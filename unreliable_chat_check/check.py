@@ -402,6 +402,48 @@ class TestCase():
         return success
 
 
+def set_and_get():
+    client_name_1 = generate_name()
+
+    expected_output = "The value of DELAY-LEN is 0 3"
+
+    client_process_1 , _= log_in(client_name_1)
+    client_process_1.sendline('!set DELAY-LEN 0 3')
+    client_process_1.sendline('!get DELAY-LEN')
+    try:
+        client_process_1.expect(expected_output, timeout=1)
+    except TimeoutException:
+        client_process_1.terminate(force=True)
+        raise TestException(f'unexpected reciever client output when attempting to set and get the value of DELAY-LEN! Expected output: \'{expected_output}\'. Actual output: {client_process_1.readline()}')
+    except EndOfFileException:
+        client_process_1.terminate(force=True)
+        raise TestException(f'program has unexpectidly terminated when attempting to set and get the value of DELAY-LEN! Expected output: \'{expected_output}\'. Program\'s last output: {client_process_1.before}')
+
+    client_process_1.terminate()
+
+    return client_process_1
+
+def reset():
+    client_name_1 = generate_name()
+
+    expected_output = "The value of DELAY-LEN is 5 5"
+
+    client_process_1 , _= log_in(client_name_1)
+    client_process_1.sendline('!reset')
+    client_process_1.sendline('!get DELAY-LEN')
+    try:
+        client_process_1.expect(expected_output, timeout=1)
+    except TimeoutException:
+        client_process_1.terminate(force=True)
+        raise TestException(f'unexpected reciever client output when attempting to reset and get the value of DELAY-LEN! Expected output: \'{expected_output}\'. Actual output: {client_process_1.readline()}')
+    except EndOfFileException:
+        client_process_1.terminate(force=True)
+        raise TestException(f'program has unexpectidly terminated when attempting to reset and get the value of DELAY-LEN! Expected output: \'{expected_output}\'. Program\'s last output: {client_process_1.before}')
+
+    client_process_1.terminate()
+
+    return client_process_1
+
 test_cases = [
     TestCase(start_script, "chat_unreliable_001", "Start client and expect welcome message", ['RA1', 'RI2', 'RT7']),
     TestCase(log_in, "chat_unreliable_002", "Log in with unique name and expect success message", ['RT1', 'RI1', 'RT7', 'RI3']),
@@ -418,6 +460,8 @@ test_cases = [
     TestCase(test_simple_exchange, "chat_unreliable_013", "Send message to other user and expect success (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
     TestCase(test_exchange_with_multiple, "chat_unreliable_014", "Sending multiple messages to multiple clients and checking the message ordering (with delay from 0 to 3 seconds)", ['RT1', 'RI1', 'RT7', 'RA2', 'RD1', 'RD2', 'RD3', 'RD4'], delay=1, delayLenLower=0, delayLenUpper=3),
     TestCase(test_exchange_with_multiple, "chat_unreliable_015", "Sending multiple messages to multiple clients and checking the message ordering (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
+    TestCase(set_and_get,"chat_unreliable_016","Set DELAY_LEN and expect correct values",['RI11','RI12','RI13','RC2','RC3']),
+    TestCase(reset,"chat_unreliable_017","Reset and expect correct values",['RI14','RI12','RI13','RC4','RC3'],delayLenLower=0,delayLenUpper=1),
 ]
 
 
