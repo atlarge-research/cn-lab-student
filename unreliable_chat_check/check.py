@@ -96,7 +96,7 @@ def start_script():
     return client_process, output_buffer
 
 def log_in(client_name=generate_name()):
-    expected_output = f'Succesfully logged in as {client_name}!'
+    expected_output = f'Successfully logged in as {client_name}!'
 
     client_process, output_buffer = start_script()
     client_process.sendline(client_name)
@@ -236,7 +236,7 @@ def not_restart_failed_attempt():
     client_name_2 = generate_name()
 
     expected_output_IN_USE = f'Cannot log in as {client_name_1}. That username is already in use.'
-    expected_output_success = f'Succesfully logged in as {client_name_2}'
+    expected_output_success = f'Successfully logged in as {client_name_2}'
 
     client_process_1, _ = log_in(client_name_1)
 
