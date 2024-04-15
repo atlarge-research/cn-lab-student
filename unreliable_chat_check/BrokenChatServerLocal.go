@@ -28,7 +28,7 @@ const maxDelay = 30 * time.Second
 const maxBurst = 1024
 
 var (
-	regexName                     = regexp.MustCompile("((HELLO-FROM) (\\p{L}+)$)")
+	regexName                     = regexp.MustCompile("((HELLO-FROM) ([\\p{L}0-9]+)$)")
 	regexSend                     = regexp.MustCompile("((SEND) (\\p{L}+) ([^\n]+)$)")
 	regexGet                      = regexp.MustCompile("((GET) ([\\p{L}\\-]+)$)")
 	regexSet                      = regexp.MustCompile("((SET) (\\p{L}+) (([0-9]*[.])?[0-9]+)$)")
