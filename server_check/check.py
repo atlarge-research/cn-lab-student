@@ -98,7 +98,7 @@ def start_script():
     return client_process, output_buffer
 
 def log_in(client_name="client"):
-    expected_output = f'Succesfully logged in as {client_name}!'
+    expected_output = f'Successfully logged in as {client_name}!'
 
     client_process, output_buffer = start_script()
     client_process.sendline(client_name)
