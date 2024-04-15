@@ -315,6 +315,10 @@ func main() {
 				handler = handleWho
 			case "GET":
 				handler = handleGet
+			case "SET":
+				handler = handleSet
+			case "RESET":
+				handler = handleReset
 			default:
 				handler = handleBadHeader
 			}
@@ -414,4 +418,70 @@ func handleGet(message string, addr net.Addr, output BrokenMessageOutputStream) 
 			output.Send(addr, ReplyBadBody)
 		}
 	}
+}
+
+func handleSet(message string, addr net.Addr, output BrokenMessageOutputStream) {
+	if _, ok := cb.GetUser(addr); ok {
+		if match := regexSet.FindStringSubmatch(message); match != nil {
+
+			value, err := strconv.ParseFloat(match[4], 64)
+			if err != nil {
+				output.Send(addr, ReplyBadBody)
+				return
+			}
+
+			// Handle SET requests with one value
+			switch match[3] {
+			case "DROP":
+				localSettings.drop = math.Max(0, math.Min(value, 1))
+			case "FLIP":
+				localSettings.flip = math.Max(0, math.Min(value, 1))
+			case "BURST":
+				localSettings.burst = math.Max(0, math.Min(value, 1))
+			case "DELAY":
+				localSettings.delay = math.Max(0, math.Min(value, 1))
+			default:
+				output.Send(addr, ReplyBadBody)
+				return
+			}
+			output.Send(addr, ReplySetOK)
+		} else if match := regexSetRange.FindStringSubmatch(message); match != nil {
+			
+			lower, err := strconv.ParseInt(match[4], 10, 64)
+			upper, err2 := strconv.ParseInt(match[5], 10, 64)
+			if err != nil || err2 != nil {
+				output.Send(addr, ReplyBadBody)
+				return
+			}
+						
+			// Handle SET requests with range of values
+			switch match[3] {
+			case "BURST-LEN":
+				localSettings.burstLenLower = int64(math.Max(0, float64(lower)))
+				localSettings.burstLenUpper = int64(math.Max(0, float64(upper)))
+			case "DELAY-LEN":
+				localSettings.delayLenLower = int64(math.Max(0, math.Min(float64(lower), float64(upper))))
+				localSettings.delayLenUpper = int64(math.Max(0, math.Max(float64(lower), float64(upper))))
+			default:
+				output.Send(addr, ReplyBadBody)
+				return
+			}
+			output.Send(addr, ReplySetOK)
+		} else{
+			output.Send(addr, ReplyBadBody)
+			return
+		}
+
+	}
+}
+func handleReset(message string, addr net.Addr, output BrokenMessageOutputStream) {
+	localSettings.drop = 0
+	localSettings.flip = 0
+	localSettings.burst = 0
+	localSettings.delay = 0
+	localSettings.burstLenLower = 3
+	localSettings.burstLenUpper = 3
+	localSettings.delayLenLower = 5
+	localSettings.delayLenUpper = 5
+	output.Send(addr, ReplySetOK)
 }
