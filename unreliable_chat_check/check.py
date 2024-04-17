@@ -102,7 +102,7 @@ def log_in(client_name=generate_name()):
     client_process.sendline(client_name)
 
     output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, 
-                   f'logging the client in with the name {client_name}')
+                   f'logging the client in with the name {client_name}', timeout=10)
     
 
     return client_process, output_buffer
@@ -182,7 +182,7 @@ def test_simple_exchange_increased_timeout():
     for msg in msgs:
         client_process_1.sendline(f'@{client_name_2} {msg}')
 
-    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "performing a simple message exchange (exchanging 5 messages from one client to another)", 100, display_expect_string=expected_output_TO_SHOW)
+    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "performing a simple message exchange (exchanging 5 messages from one client to another)", 90, display_expect_string=expected_output_TO_SHOW)
 
     return client_process_2, output_buffer_2
 
@@ -211,8 +211,8 @@ def test_exchange_with_multiple():
         client_process_1.sendline(f'@{client_name_2} {msgs_to_client_2[index_msg]}')
         client_process_1.sendline(f'@{client_name_3} {msgs_to_client_3[index_msg]}')
 
-    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2, client_process_3], expected_output_client_2, output_buffer_2, "performing a simple message exchange between three clients and reading output of the second client", 100, display_expect_string=expected_output_to_show_2)
-    output_buffer_3 = handle_pexpect(client_process_3, [client_process_1, client_process_2, client_process_3], expected_output_client_3, output_buffer_3, "performing a simple message exchange between mutliple clients and reading output of the third client", 100, display_expect_string=expected_output_to_show_3)
+    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2, client_process_3], expected_output_client_2, output_buffer_2, "performing a simple message exchange between three clients and reading output of the second client", 90, display_expect_string=expected_output_to_show_2)
+    output_buffer_3 = handle_pexpect(client_process_3, [client_process_1, client_process_2, client_process_3], expected_output_client_3, output_buffer_3, "performing a simple message exchange between mutliple clients and reading output of the third client", 90, display_expect_string=expected_output_to_show_3)
 
     return client_process_1, output_buffer_1
 
