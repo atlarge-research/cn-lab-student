@@ -23,7 +23,7 @@ def generate_message(min_len=32, max_len=64):
 class TestException(Exception):
     pass
 
-def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=1):
+def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=3):
     try:
         child_process.expect(expect_string, timeout=timeout)
         output_buffer += child_process.before + child_process.after
@@ -89,6 +89,8 @@ def index_reachable():
 def not_found_page_reachable():
     __, _ = start_server()
     PAGE_PATH = ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
+    PAGE_PATH = f'/{PAGE_PATH}'
+
     
     response = handle_httpconnection_request(PAGE_PATH, "GET")
 
@@ -232,6 +234,7 @@ def check_index_is_visible():
 def check_404_is_visible():
     __, _ = start_server()
     PAGE_PATH = ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
+    PAGE_PATH = f'/{PAGE_PATH}'
 
     response = handle_httpconnection_request(PAGE_PATH, "GET")
     content = response.read()
