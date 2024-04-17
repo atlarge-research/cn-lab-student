@@ -363,7 +363,7 @@ class TestCase():
         return success
 
 test_cases = [
-    TestCase(start_script, "chat_server_001", "Server starts successfuly", ['TR5']),
+    TestCase(start_script, "chat_server_001", "Server starts successfully", ['TR5']),
     TestCase(log_in, "chat_server_002", "Log in with unique name and expect success", ['PR2', 'PR3']),
     TestCase(log_in_duplicate, "chat_server_003", "Log in with duplicate name and expect failure", ['PR5']),
     TestCase(list_users, "chat_server_004", "Log in, list users and expect success", ['PR8', 'PR9']),
