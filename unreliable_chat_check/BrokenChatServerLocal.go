@@ -33,6 +33,7 @@ var (
 	regexGet                      = regexp.MustCompile("((GET) ([\\p{L}\\-]+)$)")
 	regexSet                      = regexp.MustCompile("((SET) (\\p{L}+) (([0-9]*[.])?[0-9]+)$)")
 	regexSetRange                 = regexp.MustCompile("((SET) ([\\p{L}\\-]+) ([0-9]+) ([0-9]+)$)")
+	regexReset                    = regexp.MustCompile("(RESET)")
 	regexDisallowedNameCharacters = regexp.MustCompile(`[@#$%^&*!]`)
 )
 
@@ -383,9 +384,7 @@ func handleHello(message string, addr net.Addr, output BrokenMessageOutputStream
 			}
 		}
 	} else {
-		if match := regexDisallowedNameCharacters.FindStringSubmatch(message); match != nil {
-			output.Send(addr, ReplyBadBody)
-		}
+		output.Send(addr, ReplyBadBody)
 	}
 }
 
