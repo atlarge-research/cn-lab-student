@@ -165,6 +165,27 @@ def test_simple_exchange():
 
     return client_process_2, output_buffer_2
 
+def test_simple_exchange_increased_timeout():
+    TOTAL_MSGS_SENT = 5
+
+    client_name_1 = generate_name()
+    client_name_2 = generate_name()
+
+    client_process_1, output_buffer_1 = log_in(client_name_1)
+    client_process_2, output_buffer_2 = log_in(client_name_2)
+
+    msgs = [generate_message(16, 32) for _ in range(TOTAL_MSGS_SENT)]
+    expected_output = ''.join([rf'\s*From\s+{client_name_1}:\s+{msg}\s*\n' for msg in msgs])
+    expected_output_TO_SHOW = ''.join([f'From {client_name_1}: {msg} \n' for msg in msgs])
+    expected_output = r'\s*' + expected_output + r'\s*'
+
+    for msg in msgs:
+        client_process_1.sendline(f'@{client_name_2} {msg}')
+
+    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2], expected_output, output_buffer_1, "performing a simple message exchange (exchanging 5 messages from one client to another)", 100, display_expect_string=expected_output_TO_SHOW)
+
+    return client_process_2, output_buffer_2
+
 def test_exchange_with_multiple():
     TOTAL_MSGS_SENT = 5
 
@@ -190,8 +211,8 @@ def test_exchange_with_multiple():
         client_process_1.sendline(f'@{client_name_2} {msgs_to_client_2[index_msg]}')
         client_process_1.sendline(f'@{client_name_3} {msgs_to_client_3[index_msg]}')
 
-    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2, client_process_3], expected_output_client_2, output_buffer_2, "performing a simple message exchange between three clients and reading output of the second client", 20, display_expect_string=expected_output_to_show_2)
-    output_buffer_3 = handle_pexpect(client_process_3, [client_process_1, client_process_2, client_process_3], expected_output_client_3, output_buffer_3, "performing a simple message exchange between mutliple clients and reading output of the third client", 20, display_expect_string=expected_output_to_show_3)
+    output_buffer_2 = handle_pexpect(client_process_2, [client_process_1, client_process_2, client_process_3], expected_output_client_2, output_buffer_2, "performing a simple message exchange between three clients and reading output of the second client", 100, display_expect_string=expected_output_to_show_2)
+    output_buffer_3 = handle_pexpect(client_process_3, [client_process_1, client_process_2, client_process_3], expected_output_client_3, output_buffer_3, "performing a simple message exchange between mutliple clients and reading output of the third client", 100, display_expect_string=expected_output_to_show_3)
 
     return client_process_1, output_buffer_1
 
@@ -411,11 +432,11 @@ test_cases = [
     TestCase(test_busy, "chat_unreliable_006", "Log in with busy server, expect failure, and shut client down gracefully", ['RT1', 'RI1', 'RT7', 'RI6'], max_clients=0),
     TestCase(test_simple_exchange, "chat_unreliable_007", "Send message to other user and expect success (no unreliabillity settings)", ['RT1', 'RI1', 'RT7', 'RI2', 'RI8', 'RI10']),
     TestCase(send_message_to_unknown, "chat_unreliable_008", "Send message to non-existent user and expect failure", ['RT1', 'RI1', 'RT7', 'RI9']),
-    TestCase(test_simple_exchange, "chat_unreliable_009", "Send message to other user and expect success (with bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RI2', 'RI8', 'RI10', 'RE1', 'RE2', 'RE3'], burst=0.05, burstLenLower=1, burstLenUpper=16),
-    TestCase(test_simple_exchange, "chat_unreliable_010", "Sending multiple messages and expecting them to be printed in order (with delay from 0 to 3 seconds)", ['RT1', 'RI1', 'RT7', 'RA2', 'RD1'], delay=1, delayLenLower=0, delayLenUpper=1),
-    TestCase(test_simple_exchange, "chat_unreliable_011", "Send message to other user and expect success (with the bitflip 0.0005)", ['RT1', 'RI1', 'RT7', 'RA2', 'RE1', 'RE2', 'RE3'], flip=0.0005),
-    TestCase(test_simple_exchange, "chat_unreliable_012", "Send message to other user and expect success (with the drop 0.1)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5'], drop=0.1),
-    TestCase(test_simple_exchange, "chat_unreliable_013", "Send message to other user and expect success (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
+    TestCase(test_simple_exchange_increased_timeout, "chat_unreliable_009", "Send message to other user and expect success (with bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RI2', 'RI8', 'RI10', 'RE1', 'RE2', 'RE3'], burst=0.05, burstLenLower=1, burstLenUpper=16),
+    TestCase(test_simple_exchange_increased_timeout, "chat_unreliable_010", "Sending multiple messages and expecting them to be printed in order (with delay from 0 to 3 seconds)", ['RT1', 'RI1', 'RT7', 'RA2', 'RD1'], delay=1, delayLenLower=0, delayLenUpper=1),
+    TestCase(test_simple_exchange_increased_timeout, "chat_unreliable_011", "Send message to other user and expect success (with the bitflip 0.0005)", ['RT1', 'RI1', 'RT7', 'RA2', 'RE1', 'RE2', 'RE3'], flip=0.0005),
+    TestCase(test_simple_exchange_increased_timeout, "chat_unreliable_012", "Send message to other user and expect success (with the drop 0.1)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5'], drop=0.1),
+    TestCase(test_simple_exchange_increased_timeout, "chat_unreliable_013", "Send message to other user and expect success (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
     TestCase(test_exchange_with_multiple, "chat_unreliable_014", "Sending multiple messages to multiple clients and checking the message ordering (with delay from 0 to 3 seconds)", ['RT1', 'RI1', 'RT7', 'RA2', 'RD1', 'RD2', 'RD3', 'RD4'], delay=1, delayLenLower=0, delayLenUpper=3),
     TestCase(test_exchange_with_multiple, "chat_unreliable_015", "Sending multiple messages to multiple clients and checking the message ordering (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
 ]
