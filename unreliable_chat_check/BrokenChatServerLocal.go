@@ -33,7 +33,6 @@ var (
 	regexGet                      = regexp.MustCompile("((GET) ([\\p{L}\\-]+)$)")
 	regexSet                      = regexp.MustCompile("((SET) (\\p{L}+) (([0-9]*[.])?[0-9]+)$)")
 	regexSetRange                 = regexp.MustCompile("((SET) ([\\p{L}\\-]+) ([0-9]+) ([0-9]+)$)")
-	regexReset                    = regexp.MustCompile("(RESET)")
 	regexDisallowedNameCharacters = regexp.MustCompile(`[@#$%^&*!]`)
 )
 
@@ -315,6 +314,10 @@ func main() {
 				handler = handleWho
 			case "GET":
 				handler = handleGet
+			case "SET":
+				handler = handleSetSelect
+			case "RESET":
+				handler = handleReset
 			default:
 				handler = handleBadHeader
 			}
@@ -369,7 +372,7 @@ func handleHello(message string, addr net.Addr, output BrokenMessageOutputStream
 		} else { // HELLO-FROM format is correct. Enough space for new client
 			name := match[3]
 			if cb.IsKnown(name) { // But this username already exists
-				if cb.nameToAddr[name] == addr.String(){ // check if username belongs to this address
+				if cb.nameToAddr[name] == addr.String() { // check if username belongs to this address
 					output.Send(addr, ReplyBadHdr)
 				} else {
 					output.Send(addr, ReplyInUse)
@@ -382,7 +385,7 @@ func handleHello(message string, addr net.Addr, output BrokenMessageOutputStream
 	} else {
 		if match := regexDisallowedNameCharacters.FindStringSubmatch(message); match != nil {
 			output.Send(addr, ReplyBadBody)
-		} 
+		}
 	}
 }
 
@@ -414,4 +417,122 @@ func handleGet(message string, addr net.Addr, output BrokenMessageOutputStream) 
 			output.Send(addr, ReplyBadBody)
 		}
 	}
+}
+
+func handleSetSelect(message string, addr net.Addr, output BrokenMessageOutputStream) {
+	split := strings.Split(message, " ")
+	switch split[1] {
+	case "BURST-LEN":
+	case "DELAY-LEN":
+		handleSetRange(message, addr, output)
+	default:
+		handleSet(message, addr, output)
+	}
+}
+
+func handleSet(message string, addr net.Addr, output BrokenMessageOutputStream) {
+	if _, ok := cb.GetUser(addr); ok {
+		if match := regexSet.FindStringSubmatch(message); match != nil {
+			switch match[3] {
+			case "DROP":
+				value, err := strconv.ParseFloat(match[4], 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+				localSettings.drop = value
+				output.Send(addr, "SET-OK\n")
+				return
+			case "FLIP":
+				value, err := strconv.ParseFloat(match[4], 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+				localSettings.flip = value
+				output.Send(addr, "SET-OK\n")
+				return
+			case "BURST":
+				value, err := strconv.ParseFloat(match[4], 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+				localSettings.burst = value
+				output.Send(addr, "SET-OK\n")
+				return
+			case "DELAY":
+				value, err := strconv.ParseFloat(match[4], 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+				localSettings.delay = value
+				output.Send(addr, "SET-OK\n")
+				return
+			default:
+				output.Send(addr, ReplyBadBody)
+				return
+			}
+		} else {
+			output.Send(addr, ReplyBadBody)
+		}
+	}
+}
+
+func handleSetRange(message string, addr net.Addr, output BrokenMessageOutputStream) {
+	if _, ok := cb.GetUser(addr); ok {
+		if match := regexSetRange.FindStringSubmatch(message); match != nil {
+			switch match[3] {
+			case "BURST-LEN":
+				lower, err := strconv.ParseInt(match[4], 10, 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+				upper, err := strconv.ParseInt(match[5], 10, 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+
+				localSettings.burstLenLower = lower
+				localSettings.burstLenUpper = upper
+				output.Send(addr, "SET-OK\n")
+				return
+			case "DELAY-LEN":
+				lower, err := strconv.ParseInt(match[4], 10, 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+				upper, err := strconv.ParseInt(match[5], 10, 64)
+				if err != nil {
+					output.Send(addr, ReplyBadBody)
+					return
+				}
+
+				localSettings.delayLenLower = lower
+				localSettings.delayLenUpper = upper
+				output.Send(addr, "SET-OK\n")
+				return
+			default:
+				output.Send(addr, ReplyBadBody)
+				return
+			}
+		}
+	}
+}
+
+func handleReset(_ string, addr net.Addr, output BrokenMessageOutputStream) {
+	localSettings.burst = 0
+	localSettings.delay = 0
+	localSettings.flip = 0
+	localSettings.drop = 0
+
+	localSettings.burstLenLower = 0
+	localSettings.burstLenUpper = 0
+	localSettings.delayLenLower = 0
+	localSettings.delayLenUpper = 0
+	output.Send(addr, "SET-OK\n")
 }
