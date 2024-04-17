@@ -82,6 +82,11 @@ def execute_and_collect_output(cmd):
 
 def execute_and_detach(cmd):
     child = pexpect.spawn(cmd, encoding='utf-8')
+    try:
+        child.expect(pexpect.EOF, timeout=0.5)
+        raise TestException(f'The command \'{cmd}\' has terminated unexpectedly')
+    except:
+        pass
     return child
 
 def start_script():
