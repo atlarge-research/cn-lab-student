@@ -361,7 +361,32 @@ def quit_after_log_in():
     client_process.terminate()
 
     return client_process
+def set_and_get():
+    client_name = generate_name()
 
+    client_process, output_buffer  = log_in(client_name)
+
+    expected_output = "The value of DELAY-LEN is 0 3"
+    client_process.sendline('!set DELAY-LEN 0 3')
+    client_process.sendline('!get DELAY-LEN')
+
+    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "setting and getting DELAY-LEN")
+
+    return client_process, output_buffer
+
+def reset():
+    client_name = generate_name()
+    
+    client_process, output_buffer  = log_in(client_name)
+
+    expected_output = "The value of DELAY-LEN is 0 0"
+    client_process.sendline('!reset')
+    client_process.sendline('!get DELAY-LEN')
+
+    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "Resetting all values and getting DELAY-LEN")
+
+    return client_process, output_buffer
+    
 class TestCase():
     def __init__(self, test_func, test_id, test_msg, tags=[], max_clients=300, burst=0, delay=0, flip=0, drop=0, delayLenLower=0, delayLenUpper=0, burstLenLower=0, burstLenUpper=0) -> None:
         self.tags = tags
@@ -439,6 +464,8 @@ test_cases = [
     TestCase(test_simple_exchange_increased_timeout, "chat_unreliable_013", "Send message to other user and expect success (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
     TestCase(test_exchange_with_multiple, "chat_unreliable_014", "Sending multiple messages to multiple clients and checking the message ordering (with delay from 0 to 3 seconds)", ['RT1', 'RI1', 'RT7', 'RA2', 'RD1', 'RD2', 'RD3', 'RD4'], delay=1, delayLenLower=0, delayLenUpper=3),
     TestCase(test_exchange_with_multiple, "chat_unreliable_015", "Sending multiple messages to multiple clients and checking the message ordering (with the drop 0.1, delay from 0 to 1 seconds, and bursts from 1 up to 16 bits)", ['RT1', 'RI1', 'RT7', 'RD1', 'RD3', 'RD5', 'RE1', 'RE2', 'RE3'], drop=0.1, burst=0.05, burstLenLower=1, burstLenUpper=16, delay=1, delayLenLower=0, delayLenUpper=1),
+    TestCase(set_and_get,"chat_unreliable_016","Set DELAY_LEN and expect correct values",['RI11','RI12','RI13','RC2','RC3']),
+    TestCase(reset,"chat_unreliable_017","Reset and expect correct values",['RI14','RI12','RI13','RC4','RC3'],delayLenLower=2,delayLenUpper=2),
 ]
 
 
