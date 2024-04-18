@@ -135,7 +135,7 @@ class TestCase():
             
             success = False
 
-            return success
+        return success
 
 
 test_cases = [
