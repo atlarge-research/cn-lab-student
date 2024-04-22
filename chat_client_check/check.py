@@ -64,12 +64,13 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
     return output_buffer
     
 
-def start_server(maxClients=300):
-    server_process = execute_and_detach(f'java -jar ChatServer.jar {maxClients}')
+def start_server(maxClients=300, clientListPrintingOn=True, delayOn=True):
+    server_process = execute_and_detach(f'java -jar ChatServer.jar {maxClients} {clientListPrintingOn} {delayOn}')
     server_process.expect("Now listening on port 5378")
     echobot_process = execute_and_detach("java -jar EchoBot.jar 127.0.0.1 5378")
+    delaybot_process = execute_and_detach("java -jar EchoBot.jar 127.0.0.1 5378 delaybot")
 
-    return server_process,echobot_process
+    return server_process, echobot_process, delaybot_process
 
 
 def execute_and_wait(cmd):
@@ -137,7 +138,7 @@ def log_in_duplicate():
     return client_process_1, output_buffer_1
 
 def list_users():
-    expect_num_line = 'There are 4 online users:'
+    expect_num_line = 'There are 5 online users:'
 
     client_name_1 = generate_name()
     client_name_2 = generate_name()
@@ -375,16 +376,18 @@ def check_message_concurrency():
     return client_process_1, output_buffer_1
 
 class TestCase():
-    def __init__(self, test_func, test_id, test_msg, tags=[], max_clients=300) -> None:
+    def __init__(self, test_func, test_id, test_msg, tags=[], max_clients=300, clientListPrintingOn=True, delayOn=True) -> None:
         self.tags = tags
         self.test_func = test_func
         self.test_id = test_id
         self.test_msg = test_msg
         self.max_clients = max_clients
+        self.clientListPrintingOn = clientListPrintingOn
+        self.delayOn = delayOn
     
     def execute(self, disable_colors):
         success = True
-        server_process,echobot = start_server(self.max_clients)
+        server_process, echobot, delaybot = start_server(self.max_clients, self.clientListPrintingOn, self.delayOn)
         tags_string = ' '.join(self.tags)
         
         try:
@@ -405,6 +408,7 @@ class TestCase():
                 
         server_process.terminate(force=True)
         echobot.terminate(force = True)
+        delaybot.terminate(force = True)
 
         return success
 
