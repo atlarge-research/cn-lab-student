@@ -23,25 +23,46 @@ def generate_message(min_len=32, max_len=64):
 class TestException(Exception):
     pass
 
-def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=1):
+def get_last_printed_line(output_buffer):
+    last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT]'
+    lines = output_buffer.split('\n')
+
+    for line in reversed(lines):
+        if line.strip():
+            last_printed_line = line
+            break
+
+    return last_printed_line
+
+def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=1, display_expect_string=''):
     try:
         child_process.expect(expect_string, timeout=timeout)
         output_buffer += child_process.before + child_process.after
 
     except TimeoutException:
         output_buffer += child_process.before
+        last_printed_line = get_last_printed_line(output_buffer)
 
         for process in processes_to_terminate:
             process.terminate(force=True)
 
-        raise TestException(f'unexpected output at step {step}!\nExpected output:\n\n{expect_string}\n\nActual output: \n\n{child_process.before}\n\nTotal program output:\n\n{output_buffer}')
+        if display_expect_string:
+            expect_string = display_expect_string
+
+        raise TestException(f'unexpected output at step {step}!\nExpected output:\n\n{expect_string}\n\nActual output (the last printed line): \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     except EndOfFileException:
-        output_buffer += child_process.before + child_process.after
+        if type(child_process.before) == 'str':
+            output_buffer += child_process.before
+        
+        if type(child_process.after) == 'str':
+            output_buffer += child_process.after
+        
+        last_printed_line = get_last_printed_line(output_buffer)
 
         for process in processes_to_terminate:
             process.terminate(force=True)
             
-        raise TestException(f'program has unexpectidly terminated at step {step}!\nExpected output:\n\n{expect_string}\n\nProgram\'s last output: \n\n{child_process.before}\n\nTotal program output:\n\n{output_buffer}')
+        raise TestException(f'program has unexpectidly terminated at step {step}!\nExpected output:\n\n{expect_string}\n\nProgram\'s last printed line: \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     
     return output_buffer
 
@@ -324,14 +345,6 @@ class TestCase():
                 print(f'\033[92m[ \u2713 ] \033[30m{self.test_id}. {self.test_msg}. \033[92mSuccess! \033[0m')
             else:
                 print(f'[ \u2713 ] {self.test_id}. {self.test_msg}. Success! ')
-
-        except TypeError as e: # originates from pexpect .before if script terminates. except for more readable error message
-            success = False
-            
-            if not disable_colors:
-                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start \033[0m')
-            else:
-                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour server did not start')
         
         except Exception as e:
             success = False

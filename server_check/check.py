@@ -21,27 +21,41 @@ def generate_message(min_len=32, max_len=64):
 class TestException(Exception):
     pass
 
-def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=1):
+def get_last_printed_line(output_buffer):
+    last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT] - the client did not produce any output which means it could not connect to the server. Please check you are starting your server at a correct address \'127.0.0.1\' and port 5378'
+    lines = output_buffer.split('\n')
+
+    for line in reversed(lines):
+        if line.strip():
+            last_printed_line = line
+            break
+
+    return last_printed_line
+
+def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=1, display_expect_string=''):
     try:
         child_process.expect(expect_string, timeout=timeout)
         output_buffer += child_process.before + child_process.after
 
     except TimeoutException:
         output_buffer += child_process.before
-        last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT]'
-        lines = output_buffer.split('\n')
-
-        for line in reversed(lines):
-            if line.strip():
-                last_printed_line = line
-                break
+        last_printed_line = get_last_printed_line(output_buffer)
 
         for process in processes_to_terminate:
             process.terminate(force=True)
 
-        raise TestException(f'unexpected client output at the step {step}!\nExpected output:\n\n{expect_string}\n\nActual output (the last printed line): \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
+        if display_expect_string:
+            expect_string = display_expect_string
+
+        raise TestException(f'unexpected output at step {step}!\nExpected output:\n\n{expect_string}\n\nActual output (the last printed line): \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     except EndOfFileException:
-        output_buffer += child_process.before + child_process.after
+        if type(child_process.before) == 'str':
+            output_buffer += child_process.before
+        
+        if type(child_process.after) == 'str':
+            output_buffer += child_process.after
+        
+        last_printed_line = get_last_printed_line(output_buffer)
 
         for process in processes_to_terminate:
             process.terminate(force=True)
@@ -322,9 +336,9 @@ class TestCase():
             server_process, _ = start_server()
         except:
             if not disable_colors:
-                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nError message is the server did not start. Please make sure your server prints Server is on on startup \033[0m')
+                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nError message is the server did not start. Please make sure your server prints \'Server is on\' on startup \033[0m')
             else:
-                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nError message is {e} \nThe server output is {server_process.before}')
+                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nError message is the server did not start. Please make sure your server prints \'Server is on\' on startup')
             
             return False
 
@@ -336,14 +350,6 @@ class TestCase():
             else:
                 print(f'[ \u2713 ] {self.test_id}. {self.test_msg}. Success!')
         
-        except TypeError as e: # originates from pexpect .before if script terminates. except for more readable error message
-            success = False
-
-            if not disable_colors:
-                print(f'\033[91m[ x ] \033[30m{self.test_id}. {self.test_msg} \033[91mFailed! \033[30m The list of tags is {tags_string} \nYour server did not start or did not keep running\033[0m')
-            else:
-                print(f'[ x ] {self.test_id}. {self.test_msg} Failed! The list of tags is {tags_string} \nYour server did not start or did not keep running')
-
         except Exception as e:
             try:
                 server_process.expect(pexpect.EOF, timeout=0)

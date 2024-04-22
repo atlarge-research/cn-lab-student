@@ -12,6 +12,17 @@ STUDENT_FILE_PATH = "../student/dns_check/dns.py"
 class TestException(Exception):
     pass
 
+def get_last_printed_line(output_buffer):
+    last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT]'
+    lines = output_buffer.split('\n')
+
+    for line in reversed(lines):
+        if line.strip():
+            last_printed_line = line
+            break
+
+    return last_printed_line
+
 def handle_pexpect(child_process, processes_to_terminate, expect_string, output_buffer, step, timeout=1, display_expect_string=''):
     try:
         child_process.expect(expect_string, timeout=timeout)
@@ -19,20 +30,23 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
 
     except TimeoutException:
         output_buffer += child_process.before
-        last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT]'
-        lines = output_buffer.split('\n')
-
-        for line in reversed(lines):
-            if line.strip():
-                last_printed_line = line
-                break
+        last_printed_line = get_last_printed_line(output_buffer)
 
         for process in processes_to_terminate:
             process.terminate(force=True)
 
+        if display_expect_string:
+            expect_string = display_expect_string
+
         raise TestException(f'unexpected output at step {step}!\nExpected output:\n\n{expect_string}\n\nActual output (the last printed line): \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     except EndOfFileException:
-        output_buffer += child_process.before + child_process.after
+        if type(child_process.before) == 'str':
+            output_buffer += child_process.before
+        
+        if type(child_process.after) == 'str':
+            output_buffer += child_process.after
+        
+        last_printed_line = get_last_printed_line(output_buffer)
 
         for process in processes_to_terminate:
             process.terminate(force=True)
