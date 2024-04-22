@@ -137,6 +137,8 @@ def log_in_duplicate():
     return client_process_1, output_buffer_1
 
 def list_users():
+    expect_num_line = 'There are 4 online users:'
+
     client_name_1 = generate_name()
     client_name_2 = generate_name()
     client_name_3 = generate_name()
@@ -149,6 +151,7 @@ def list_users():
 
     clients_list = [[client_name_1, client_process_1], [client_name_2, client_process_2], [client_name_3, client_process_3]]
 
+    handle_pexpect(client_process_3, [process for _, process in clients_list], expect_num_line, output_buffer_3, f'checking that the correct number of users online appearing in the output')
     [handle_pexpect(client_process_3, [process for _, process in clients_list], name, output_buffer_3, f'checking that the name {name} appears in !who output') for name, _ in clients_list]
 
     return client_process_3
