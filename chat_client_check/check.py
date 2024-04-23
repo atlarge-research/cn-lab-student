@@ -375,6 +375,23 @@ def check_message_concurrency():
     
     return client_process_1, output_buffer_1
 
+def check_message_delay():
+    client_name = generate_name()
+    client_process, output_buffer = log_in(client_name)
+
+    message = generate_message()
+
+    expected_output = ''.join([rf'\s*From\s+delaybot:\s+{message}\s*\n' for _ in range(2)])
+    expected_output_to_show = ''.join([f'From delaybot: {message}\n' for _ in range(2)])
+
+    expected_output = r'\s*' + expected_output + r'\s*'
+
+    client_process.sendline(f'@delaybot {message}')
+
+    output_buffer = handle_pexpect(client_process, [client_process], expected_output, output_buffer, "delayed message exchange with delaybot. Delaybot duplicated received message and then sends back first half the message, then the rest one and a half", 7, display_expect_string=expected_output_to_show)
+
+    return client_process, output_buffer
+
 class TestCase():
     def __init__(self, test_func, test_id, test_msg, tags=[], max_clients=300, clientListPrintingOn=True, delayOn=True) -> None:
         self.tags = tags
@@ -429,7 +446,8 @@ test_cases = [
     TestCase(error_body,  "chat_013", "Last message received from the client contains an error in the body", ['RI1', 'RT7', 'R13']),
     TestCase(quit_after_log_in, "chat_014", "A client can exit after log in", ['RI1', 'RT7', 'RC1', 'RA8']),    
     TestCase(quit_before_log_in, "chat_015", "A client can exit before log in", ['RI1', 'RT7', 'RC1', 'RA8']),
-    TestCase(check_message_concurrency, "chat_016", "Send message from C1 and then send 2-3 messages to client C1 from C2. Check those are displayed straight away", ['RI1', 'RT7', 'RT6'])
+    TestCase(check_message_concurrency, "chat_016", "Send message from C1 and then send 2-3 messages to client C1 from C2. Check those are displayed straight away", ['RI1', 'RT7', 'RT6']),
+    TestCase(check_message_delay, "chat_017", "Send a delayed message to delaybot and expect it to print out correctly", ['RI1', 'RT7', 'RT6'])
 ]
 
 
