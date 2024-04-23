@@ -447,7 +447,7 @@ test_cases = [
     TestCase(quit_after_log_in, "chat_014", "A client can exit after log in", ['RI1', 'RT7', 'RC1', 'RA8']),    
     TestCase(quit_before_log_in, "chat_015", "A client can exit before log in", ['RI1', 'RT7', 'RC1', 'RA8']),
     TestCase(check_message_concurrency, "chat_016", "Send message from C1 and then send 2-3 messages to client C1 from C2. Check those are displayed straight away", ['RI1', 'RT7', 'RT6']),
-    TestCase(check_message_delay, "chat_017", "Send a delayed message to delaybot and expect it to print out correctly", ['RI1', 'RT7', 'RT6'])
+    TestCase(check_message_delay, "chat_017", "Send a delayed message to delaybot and expect it to print out correctly", ['RT3', 'RT5', 'RT7'])
 ]
 
 
