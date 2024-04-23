@@ -47,7 +47,7 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
         if display_expect_string:
             expect_string = display_expect_string
 
-        raise TestException(f'unexpected output at step {step}!\nExpected output (to appear within a program):\n\n{expect_string}\n\nProgram\'s last printed line: \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
+        raise TestException(f'unexpected output at step {step}!\nExpected output to appear within a program:\n\n{expect_string}\n\nProgram\'s last printed line: \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     except EndOfFileException:
         if type(child_process.before) == 'str':
             output_buffer += child_process.before
@@ -60,7 +60,7 @@ def handle_pexpect(child_process, processes_to_terminate, expect_string, output_
         for process in processes_to_terminate:
             process.terminate(force=True)
             
-        raise TestException(f'program has unexpectidly terminated at step {step}!\nExpected output (to appear within a program):\n\n{expect_string}\n\nProgram\'s last printed line: \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
+        raise TestException(f'program has unexpectidly terminated at step {step}!\nExpected output to appear within a program:\n\n{expect_string}\n\nProgram\'s last printed line: \n\n{last_printed_line}\n\nTotal program output:\n\n{output_buffer}')
     
     return output_buffer
 
