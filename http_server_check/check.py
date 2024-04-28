@@ -109,7 +109,7 @@ def index_reachable():
 
 def not_found_page_reachable():
     __, _ = start_server()
-    PAGE_PATH = ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
+    PAGE_PATH = f"/{''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))}"
     
     response = handle_httpconnection_request(PAGE_PATH, "GET")
 
@@ -252,7 +252,7 @@ def check_index_is_visible():
 
 def check_404_is_visible():
     __, _ = start_server()
-    PAGE_PATH = ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))
+    PAGE_PATH = f"/{''.join(random.choice(string.ascii_letters) for _ in range(random.randint(8, 16)))}"
 
     response = handle_httpconnection_request(PAGE_PATH, "GET")
     content = response.read()
