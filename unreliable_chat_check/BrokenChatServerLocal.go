@@ -422,6 +422,7 @@ func handleSetSelect(message string, addr net.Addr, output BrokenMessageOutputSt
 	split := strings.Split(message, " ")
 	switch split[1] {
 	case "BURST-LEN":
+		handleSetRange(message, addr, output)
 	case "DELAY-LEN":
 		handleSetRange(message, addr, output)
 	default:
