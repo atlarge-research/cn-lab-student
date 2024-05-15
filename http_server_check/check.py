@@ -231,6 +231,7 @@ def test_persistent_connection():
         response = connection.getresponse()
         response.read()
     except Exception as e:
+        print(e)
         raise TestException(f'Error {e} when attempting to reuse HTTP connection. Make sure your server supports persistent HTTP1.1 connections')
     
     if response.status != 200:
@@ -364,7 +365,7 @@ test_cases = [
     TestCase(check_content_length, "http_server_004", "Request a page and expect appropiate content length", ['RR3']), 
     TestCase(not_found_page_reachable, "http_server_005", "Request non-existent page and expect 404 status code", ['RR7']),
     TestCase(load_index_page_cat_images, "http_server_006", "Request templated images and expect 200 status code", ['LR5']),
-    TestCase(send_data, "http_server_007", "Submit form data to /data endpoint and expect 201 status code", ['LR7']),
+    TestCase(send_data, "http_server_007", "Submit form data to /data endpoint and expect 200 status code", ['LR7']),
     TestCase(send_data_and_check_is_visible, "http_server_008", "Submit form data to /data endpoint and expect form results appear on /personal_cats.html page", ['LR6', 'LR7']),
     TestCase(test_persistent_connection, "http_server_009", "Submit two requests using one connection and expect both success (testing server persistent connection support)", ['PR4']),
     TestCase(check_index_is_visible, "http_server_010", "Request index.html and expect to be visible", ['LR3']),
