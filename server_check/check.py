@@ -153,7 +153,7 @@ def reject_usernames_spaces():
     _, output = execute_and_wait(nc_cmd)
     
     if not expected_output in output:
-        raise TestException(f"your server did not return BAD-RQST-BODY when logging in with a username that contains commas. Reply was '{output}'")
+        raise TestException(f"your server did not return BAD-RQST-BODY when logging in with a username that contains spaces. Reply was '{output}'")
 
     return output
 
