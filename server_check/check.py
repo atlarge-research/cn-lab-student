@@ -126,7 +126,13 @@ def reject_usernames_commas():
     client_name_pt2 = generate_name()
     
     expected_output = "BAD-RQST-BODY"
-    _, output = execute_and_wait(f'echo "HELLO-FROM {client_name_pt1},{client_name_pt2}" | nc 127.0.0.1 5378 -W 1')
+
+    echo_cmd = f'echo "HELLO-FROM {client_name_pt1},{client_name_pt2}"'
+    _, echo_output = execute_and_wait(echo_cmd)
+
+    nc_cmd = f'echo "{echo_output}" | nc 127.0.0.1 5378 -W 1'
+
+    _, output = execute_and_wait(nc_cmd)
     
     if not expected_output in output:
         raise TestException(f"your server did not return BAD-RQST-BODY when logging in with a username that contains commas. Reply was '{output}'")
@@ -138,7 +144,13 @@ def reject_usernames_spaces():
     client_name_pt2 = generate_name()
     
     expected_output = "BAD-RQST-BODY"
-    _, output = execute_and_wait(f'echo "HELLO-FROM {client_name_pt1} {client_name_pt2}" | nc 127.0.0.1 5378 -W 1')
+
+    echo_cmd = f'echo "HELLO-FROM {client_name_pt1} {client_name_pt2}"'
+    _, echo_output = execute_and_wait(echo_cmd)
+
+    nc_cmd = f'echo "{echo_output}" | nc 127.0.0.1 5378 -W 1'
+
+    _, output = execute_and_wait(nc_cmd)
     
     if not expected_output in output:
         raise TestException(f"your server did not return BAD-RQST-BODY when logging in with a username that contains spaces. Reply was '{output}'")
@@ -313,7 +325,12 @@ def send_message_before_login():
     message = generate_message()
     
     expected_output = "BAD-RQST-HDR"
-    _, output = execute_and_wait(f'echo "SEND {client_name_1} {message}" | nc 127.0.0.1 5378 -W 1')
+    
+    echo_cmd = f'echo "SEND {client_name_1} {message}"'
+    _, echo_output = execute_and_wait(echo_cmd)
+
+    nc_cmd = f'echo "{echo_output}" | nc 127.0.0.1 5378 -W 1'
+    _, output = execute_and_wait(nc_cmd)
     
     if not expected_output in output:
         raise TestException(f"your server did not return BAD-RQST-HDR when trying to send messages before logging in. Answer was '{output}'")
