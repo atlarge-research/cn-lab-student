@@ -22,7 +22,7 @@ class TestException(Exception):
     pass
 
 def get_last_printed_line(output_buffer):
-    last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT] - the client did not produce any output which means it could not connect to the server. Please check you are starting your server at a correct address \'127.0.0.1\' and port 5378'
+    last_printed_line = '[EMPTY LINE. PROGRAM DID NOT PRODUCE ANY OUTPUT] - the client did not produce any output which means it could not connect to the server. Please check you are starting your server at a correct address \'127.0.0.1\' and port 5378 and that your server uses reuse option BEFORE binding to the port'
     lines = output_buffer.split('\n')
 
     for line in reversed(lines):
